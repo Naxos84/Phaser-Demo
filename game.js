@@ -16,6 +16,12 @@ export class GameScene extends Phaser.Scene {
     }
 
     create() {
+        console.log("Create game scene");
+
+        this.add.text(100, 0, "Click the large logo to return to menu screen.");
+        this.add.text(100, 15, "Click somewhere else to spawn smaller logos.");
+        this.add.text(100, 30, "Click small logo to destroy it.");
+
         this.platforms = this.physics.add.staticGroup();
 
         this.platforms.create(400, 568, "ground").setScale(10, 2).refreshBody();

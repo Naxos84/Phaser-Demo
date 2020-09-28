@@ -16,8 +16,11 @@ export class MenuScene extends Phaser.Scene {
     }
 
     create() {
+        console.log("Create menu scene");
+
         this.add.image(400, 300, "red");
         this.scoreText = this.add.text(10, 10, this.score);
+        this.add.text(100, 10, "Click HERE to start");
         const gameScene = this.scene.get("GameScene");
         gameScene.events.on("addScore", function () {
             console.log("score ", this.score);
