@@ -17,12 +17,12 @@ export class TilemapScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image("tileset", "../assets/tileset/mario.png");
-        this.load.tilemapTiledJSON("map", "../assets/map/demo.json");
-        this.load.image("player", "../assets/img/platformChar_idle.png");
-        this.load.image("controls_left", "../assets/img/controls_left.png");
-        this.load.image("controls_right", "../assets/img/controls_right.png");
-        this.load.image("controls_up", "../assets/img/controls_up.png");
+        this.load.image("tileset", "assets/tileset/mario.png");
+        this.load.tilemapTiledJSON("map", "assets/map/demo.json");
+        this.load.image("player", "assets/img/platformChar_idle.png");
+        this.load.image("controls_left", "assets/img/controls_left.png");
+        this.load.image("controls_right", "assets/img/controls_right.png");
+        this.load.image("controls_up", "assets/img/controls_up.png");
     }
 
     create() {
