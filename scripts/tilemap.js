@@ -26,6 +26,10 @@ export class TilemapScene extends Phaser.Scene {
     }
 
     create() {
+        const os = this.sys.game.device.os;
+
+        const isMobile = os.android || os.iOs || os.iPad || os.iPhone;
+
         this.cursors = this.input.keyboard.createCursorKeys();
 
         const backspace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.BACKSPACE);
@@ -65,9 +69,6 @@ export class TilemapScene extends Phaser.Scene {
         this.player.body.useDamping = true;
         this.physics.add.collider(this.player, floor);
 
-        const os = this.sys.game.device.os;
-
-        const isMobile = os.android || os.iOs || os.iPad || os.iPhone;
         if (isMobile) {
             this.leftButton = this.add
                 .image(30, 280, "controls_left")
@@ -120,7 +121,10 @@ export class TilemapScene extends Phaser.Scene {
                     this
                 )
                 .on("pointerup", function(p, x, y, e) {}, this);
+            
         }
+        
+        this.add.text(10, 10, isMobile ? "Mobile" : "Not-Mobile");
     }
 
     update(time, delta) {
