@@ -70,6 +70,7 @@ export class TilemapScene extends Phaser.Scene {
         this.physics.add.collider(this.player, floor);
 
         if (isMobile) {
+            this.input.addPointer(1);
             this.leftButton = this.add
                 .image(30, 280, "controls_left")
                 .setInteractive()
