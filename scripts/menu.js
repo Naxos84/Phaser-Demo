@@ -7,7 +7,6 @@ export class MenuScene extends Phaser.Scene {
     constructor() {
         super("MenuScene");
         this.score = 0;
-        //        super.key = "MenuScene";
         this.scoreText = null;
     }
 
@@ -27,7 +26,7 @@ export class MenuScene extends Phaser.Scene {
                 .setInteractive()
                 .on(
                     "pointerup",
-                    function(p, x, y, e) {
+                    function (p, x, y, e) {
                         e.stopPropagation();
                         this.scene.switch("GameScene");
                     },
@@ -38,7 +37,7 @@ export class MenuScene extends Phaser.Scene {
                 .setInteractive()
                 .on(
                     "pointerup",
-                    function(p, x, y, e) {
+                    function (p, x, y, e) {
                         e.stopPropagation();
                         this.scene.switch("TilemapScene");
                     },
@@ -47,7 +46,7 @@ export class MenuScene extends Phaser.Scene {
             this.gameScene = this.scene.get("GameScene");
             this.gameScene.events.on(
                 "addScore",
-                function() {
+                function () {
                     this.score += 1;
                     this.scoreText.setText(this.score);
                 },

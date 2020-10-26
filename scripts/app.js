@@ -4,6 +4,7 @@
 import { GameScene } from "./game.js";
 import { MenuScene } from "./menu.js";
 import { TilemapScene } from "./tilemap.js";
+import "../lib/phaser.js";
 
 function preload() {
     //            this.load.setBaseURL('https://labs.phaser.io');
@@ -42,19 +43,32 @@ export const gameData = {
 
 let myConfig = {
     type: Phaser.AUTO,
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: 1334,
+    height: 750,
     physics: {
         default: "arcade",
-        arcade: {
-            gravity: {
-                y: 600
-            }
-        }
     },
     parent: "game",
     scene: [MenuScene, GameScene, TilemapScene]
 };
 
 let game = new Phaser.Game(myConfig);
+window.focus();
+resize();
+window.addEventListener("resize", resize, false);
 
+function resize() {
+    let canvas = document.querySelector("canvas");
+    let windowWidth = window.innerWidth;
+    let windowHeight = window.innerHeight;
+    let windowRatio = windowWidth / windowHeight;
+    let gameRatio = game.config.width / game.config.height;
+    if (windowRatio < gameRatio) {
+        canvas.style.width = windowWidth + "px";
+        canvas.style.height = (windowWidth / gameRatio) + "px";
+    }
+    else {
+        canvas.style.width = (windowHeight * gameRatio) + "px";
+        canvas.style.height = windowHeight + "px";
+    }
+}
