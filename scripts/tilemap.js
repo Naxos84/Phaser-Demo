@@ -1,6 +1,7 @@
 /*globals window,console,Phaser*/
 /*jshint esversion:6*/
 
+import "../lib/phaser.js";
 import { getParameterByName } from "./utils.js";
 
 export class TilemapScene extends Phaser.Scene {
@@ -17,12 +18,13 @@ export class TilemapScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image("tileset", "assets/tileset/mario.png");
-        this.load.tilemapTiledJSON("map", "assets/map/demo.json");
-        this.load.image("player", "assets/img/platformChar_idle.png");
-        this.load.image("controls_left", "assets/img/controls_left.png");
-        this.load.image("controls_right", "assets/img/controls_right.png");
-        this.load.image("controls_up", "assets/img/controls_up.png");
+        this.load.image("tilesetEngine", "assets/tilesets/engine1_16_16.png");
+        this.load.image("tilesetRoguelike", "assets/tilesets/roguelike1_16_16.png");
+        this.load.tilemapTiledJSON("map", "assets/map/ow-0-0.json");
+        // this.load.image("player", "assets/img/platformChar_idle.png");
+        // this.load.image("controls_left", "assets/img/controls_left.png");
+        // this.load.image("controls_right", "assets/img/controls_right.png");
+        // this.load.image("controls_up", "assets/img/controls_up.png");
     }
 
     create() {
@@ -47,9 +49,12 @@ export class TilemapScene extends Phaser.Scene {
         const map = this.make.tilemap({
             key: "map",
         });
-        const tiles = map.addTilesetImage("mario", "tileset");
-        const background = map.createStaticLayer("Hintergrund", tiles, 0, 0);
-        const floor = map.createStaticLayer("Floor", tiles, 0, 0);
+        const tiles = map.addTilesetImage("engine1_16_16", "tilesetEngine");
+        const tiles2 = map.addTilesetImage("roguelike1_16_16", "tilesetRoguelike");
+        const background = map.createStaticLayer("Grass", tiles2, 0, 0);
+        const floor = map.createStaticLayer("Roads", tiles2, 0, 0);
+        
+        const trees = map.createStaticLayer("Trees", tiles2, 0, 0);
         floor.setCollisionByProperty({ collides: true });
 
         const debugGraphics = this.add.graphics().setAlpha(0.75);
