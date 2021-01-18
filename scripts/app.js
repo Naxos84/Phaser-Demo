@@ -23,9 +23,9 @@ function create() {
         speed: 100,
         scale: {
             start: 1,
-            end: 0
+            end: 0,
         },
-        blendMode: "NORMAL"
+        blendMode: "NORMAL",
     });
 
     var logo = this.physics.add.image(400, 100, "logo");
@@ -38,7 +38,7 @@ function create() {
 }
 
 export const gameData = {
-    score: 0
+    score: 0,
 };
 
 let myConfig = {
@@ -47,9 +47,20 @@ let myConfig = {
     height: 750,
     physics: {
         default: "arcade",
+        arcade: {
+            debug: true,
+            debugShowBody: true,
+            debugShowStaticBody: true,
+            debugShowVelocity: true,
+            debugVelocityColor: 0xffff00,
+            debugBodyColor: 0x0000ff,
+            debugStaticBodyColor: 0xffffff,
+        },
     },
     parent: "game",
-    scene: [MenuScene, GameScene, TilemapScene]
+    scene: [MenuScene, GameScene, TilemapScene],
+    title: "A world without.",
+    autoFocus: true,
 };
 
 let game = new Phaser.Game(myConfig);
@@ -65,10 +76,9 @@ function resize() {
     let gameRatio = game.config.width / game.config.height;
     if (windowRatio < gameRatio) {
         canvas.style.width = windowWidth + "px";
-        canvas.style.height = (windowWidth / gameRatio) + "px";
-    }
-    else {
-        canvas.style.width = (windowHeight * gameRatio) + "px";
+        canvas.style.height = windowWidth / gameRatio + "px";
+    } else {
+        canvas.style.width = windowHeight * gameRatio + "px";
         canvas.style.height = windowHeight + "px";
     }
 }

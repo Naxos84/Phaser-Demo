@@ -2,7 +2,6 @@
 /*jshint esversion:6*/
 
 import "../lib/phaser.js";
-import { getParameterByName } from "./utils.js";
 
 export class TilemapScene extends Phaser.Scene {
     constructor() {
@@ -11,6 +10,7 @@ export class TilemapScene extends Phaser.Scene {
         this.cursors = null;
         this.leftButton = null;
         this.rightButton = null;
+        this.mapName = "demo.json";
     }
 
     jump() {
@@ -18,16 +18,18 @@ export class TilemapScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image("tilesetEngine", "assets/tilesets/engine1_16_16.png");
-        this.load.image("tilesetRoguelike", "assets/tilesets/roguelike1_16_16.png");
-        this.load.tilemapTiledJSON("map", "assets/map/ow-0-0.json");
+        this.load.image("base", "assets/tilesets/roguelike1_16_16.png");
+        this.load.image("base-extruded", "assets/tilesets/roguelike1_16_16_extruded.png");
+        this.load.spritesheet("characters", "assets/character/characters.png", { frameWidth: 16, frameHeight: 16 });
+        this.load.tilemapTiledJSON("map", `assets/map/${this.mapName}`);
         // this.load.image("player", "assets/img/platformChar_idle.png");
-        // this.load.image("controls_left", "assets/img/controls_left.png");
-        // this.load.image("controls_right", "assets/img/controls_right.png");
-        // this.load.image("controls_up", "assets/img/controls_up.png");
+        this.load.image("controls_left", "assets/img/controls_left.png");
+        this.load.image("controls_right", "assets/img/controls_right.png");
+        this.load.image("controls_up", "assets/img/controls_up.png");
     }
 
     create() {
+        console.log("Creating tileMap scene ", this);
         const os = this.sys.game.device.os;
 
         const isMobile = os.android || os.iOs || os.iPad || os.iPhone;
@@ -35,53 +37,121 @@ export class TilemapScene extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
 
         const backspace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.BACKSPACE);
-        const space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        const left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT, true, true);
         backspace.on(
             "up",
-            function() {
+            function () {
                 this.scene.switch("MenuScene");
             },
             this
         );
-        space.on("down", this.jump.bind(this));
+        this.cursors.space.on("down", this.jump.bind(this));
 
         const map = this.make.tilemap({
             key: "map",
         });
-        const tiles = map.addTilesetImage("engine1_16_16", "tilesetEngine");
-        const tiles2 = map.addTilesetImage("roguelike1_16_16", "tilesetRoguelike");
-        const background = map.createStaticLayer("Grass", tiles2, 0, 0);
-        const floor = map.createStaticLayer("Roads", tiles2, 0, 0);
-        
-        const trees = map.createStaticLayer("Trees", tiles2, 0, 0);
-        floor.setCollisionByProperty({ collides: true });
+        const tiles = map.addTilesetImage("base", "base-extruded", 16, 16, 1, 3);
+        console.log({ map });
+        const backgroundLayer = map.createStaticLayer("Background", tiles, 0, 0);
+        const treesLayer = map.createStaticLayer("Trees", tiles, 0, 0);
+
+        backgroundLayer.setCollisionByProperty({ collision: true });
+        treesLayer.setCollisionByProperty({ collision: true });
 
         const debugGraphics = this.add.graphics().setAlpha(0.75);
-        if (getParameterByName("debug") === "true") {
-            floor.renderDebug(debugGraphics, {
-                tileColor: null, // Color of non-colliding tiles
-                collidingTileColor: new Phaser.Display.Color(123, 134, 48, 255), // Color of colliding tiles
-                faceColor: new Phaser.Display.Color(255, 0, 0, 255), // Color of colliding face edges
-            });
+        const debugRenderOptions = {
+            tileColor: null, // Color of non-colliding tiles
+            collidingTileColor: new Phaser.Display.Color(123, 134, 48, 255), // Color of colliding tiles
+            faceColor: new Phaser.Display.Color(255, 0, 0, 255), // Color of colliding face edges
+        };
+        backgroundLayer.renderDebug(debugGraphics, debugRenderOptions);
+        treesLayer.renderDebug(debugGraphics, debugRenderOptions);
+        treesLayer.setDepth(1);
+
+        this.anims.create({
+            key: "walkLeft",
+            frames: this.anims.generateFrameNumbers("characters", { frames: [18, 19, 20] }),
+            frameRate: 8,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: "standLeft",
+            frames: this.anims.generateFrameNumbers("characters", { frames: [19] }),
+            frameRate: 1,
+            repeat: -1,
+        });
+
+        this.anims.create({
+            key: "walkRight",
+            frames: this.anims.generateFrameNumbers("characters", { frames: [30, 31, 32] }),
+            frameRate: 8,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: "standRight",
+            frames: this.anims.generateFrameNumbers("characters", { frames: [31] }),
+            frameRate: 1,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: "walkDown",
+            frames: this.anims.generateFrameNumbers("characters", { frames: [6, 7, 8] }),
+            frameRate: 8,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: "standDown",
+            frames: this.anims.generateFrameNumbers("characters", { frames: [7] }),
+            frameRate: 1,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: "walkUp",
+            frames: this.anims.generateFrameNumbers("characters", { frames: [42, 43, 44] }),
+            frameRate: 8,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: "standUp",
+            frames: this.anims.generateFrameNumbers("characters", { frames: [43] }),
+            frameRate: 1,
+            repeat: -1,
+        });
+
+        this.stopAnimation = {
+            walkLeft: "standLeft",
+            walkRight: "standRight",
+            walkUp: "standUp",
+            walkDown: "standDown",
+        };
+
+        const playerSpawn = map.getObjectLayer("Objects").objects.find((obj) => obj.name === "player_spawn");
+        if (!playerSpawn) {
+            console.error(`Couldn't find 'player_spawn' object in 'Objects' layer of map ${this.mapName}`);
         }
 
         this.player = this.physics.add
-            .sprite(10, 10, "player")
-            .setDisplaySize(50, 50)
+            .sprite(playerSpawn.x, playerSpawn.y, "characters")
+            .setDisplaySize(10, 10)
             .refreshBody();
+        this.player.anims.play("standLeft");
+        this.cameras.main.startFollow(this.player);
+        this.cameras.main.setZoom(3);
+        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         this.player.body.collideWorldBounds = true;
         this.player.body.useDamping = true;
-        this.physics.add.collider(this.player, floor);
+
+        this.physics.add.collider(this.player, treesLayer);
+        this.physics.add.collider(this.player, backgroundLayer);
 
         if (isMobile) {
+            console.log("This game runs on mobile");
             this.input.addPointer(1);
             this.leftButton = this.add
                 .image(30, 280, "controls_left")
                 .setInteractive()
                 .on(
                     "pointerdown",
-                    function(pointer, x, y, e) {
+                    function (pointer, x, y, e) {
                         e.stopPropagation();
                         this.player.body.setVelocityX(-100);
                     },
@@ -89,7 +159,7 @@ export class TilemapScene extends Phaser.Scene {
                 );
             this.leftButton.on(
                 "pointerup",
-                function(pointer, x, y, e) {
+                function (pointer, x, y, e) {
                     e.stopPropagation();
                     this.player.body.setVelocityX(0);
                 },
@@ -101,7 +171,7 @@ export class TilemapScene extends Phaser.Scene {
                 .setInteractive()
                 .on(
                     "pointerdown",
-                    function(pointer, x, y, e) {
+                    function (pointer, x, y, e) {
                         e.stopPropagation();
                         this.player.body.setVelocityX(100);
                     },
@@ -109,7 +179,7 @@ export class TilemapScene extends Phaser.Scene {
                 );
             this.rightButton.on(
                 "pointerup",
-                function(pointer, x, y, e) {
+                function (pointer, x, y, e) {
                     e.stopPropagation();
                     this.player.body.setVelocityX(0);
                 },
@@ -121,51 +191,43 @@ export class TilemapScene extends Phaser.Scene {
                 .setInteractive()
                 .on(
                     "pointerdown",
-                    function(p, x, y, e) {
+                    function (p, x, y, e) {
                         this.jump();
                     },
                     this
                 )
-                .on("pointerup", function(p, x, y, e) {}, this);
-            
+                .on("pointerup", function (p, x, y, e) {}, this);
         }
-        
-        this.add.text(10, 10, isMobile ? "Mobile" : "Not-Mobile");
     }
 
     update(time, delta) {
-        //        const speed = 175;
-        //        // Stop any previous movement from the last frame
-        //        this.player.body.setVelocity(0);
-        //
-        //        this.player.body.velocity.x = 0;
-        //         Horizontal movement
+        const speed = 150;
+
         if (this.cursors.left.isDown) {
             this.player.body.setVelocityX(-100);
+            this.player.body.setVelocityY(0);
+            this.player.anims.play("walkLeft", true);
         } else if (this.cursors.right.isDown) {
             this.player.body.setVelocityX(100);
+            this.player.body.setVelocityY(0);
+            this.player.anims.play("walkRight", true);
+        } else if (this.cursors.up.isDown) {
+            this.player.body.setVelocityX(0);
+            this.player.body.setVelocityY(-100);
+            this.player.anims.play("walkUp", true);
+        } else if (this.cursors.down.isDown) {
+            this.player.body.setVelocityX(0);
+            this.player.body.setVelocityY(100);
+            this.player.anims.play("walkDown", true);
         } else {
-            if (!this.input.pointer1.isDown) {
-                this.player.body.setVelocityX(0);
-            }
+            this.player.body.setVelocityX(0);
+            this.player.body.setVelocityY(0);
+            const stopAnimationKey = this.stopAnimation[this.player.anims.currentAnim.key];
+            this.player.anims.chain(stopAnimationKey, true);
+            this.player.anims.stop();
         }
-        //        else if (this.input.pointer1.isDown) {
-        //            this.jump();
-        //            if (this.input.pointer1.downX < this.player.x) {
-        //                this.player.body.velocity.x = -100;
-        //            } else {
-        //                this.player.body.velocity.x = 100;
-        //            }
-        //        }
-        //
-        //        // Vertical movement
-        //        if (this.cursors.up.isDown) {
-        //            this.player.body.setVelocityY(-100);
-        //        } else if (this.cursors.down.isDown) {
-        //            this.player.body.setVelocityY(100);
-        //        }
-        //
-        //        // Normalize and scale the velocity so that player can't move faster along a diagonal
-        //        this.player.body.velocity.normalize().scale(speed);
+
+        // Normalize and scale the velocity so that player can't move faster along a diagonal
+        this.player.body.velocity.normalize().scale(speed);
     }
 }
