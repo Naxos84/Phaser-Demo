@@ -1,7 +1,7 @@
 /*globals document,console,Phaser*/
 /*jshint esversion:6*/
 
-import { gameData } from "./app.js";
+import { gameData } from "../app.js";
 
 export class MenuScene extends Phaser.Scene {
     constructor() {
@@ -10,8 +10,12 @@ export class MenuScene extends Phaser.Scene {
         this.scoreText = null;
     }
 
+    init(data) {
+        console.log("Initializing Menu with ", data);
+    }
+
     preload() {
-        this.load.image("red", "assets/img/red.png");
+        console.log("Preloading Menu");
     }
 
     create(data) {
@@ -22,18 +26,7 @@ export class MenuScene extends Phaser.Scene {
             this.scoreText = this.add.text(10, 10, this.score);
             this.add.text(300, 10, "Select an entry");
             this.add
-                .text(300, 200, "Physics Game")
-                .setInteractive()
-                .on(
-                    "pointerup",
-                    function (p, x, y, e) {
-                        e.stopPropagation();
-                        this.scene.switch("GameScene");
-                    },
-                    this
-                );
-            this.add
-                .text(300, 250, "Tilemap")
+                .text(300, 250, "Start game")
                 .setInteractive()
                 .on(
                     "pointerup",
@@ -43,15 +36,6 @@ export class MenuScene extends Phaser.Scene {
                     },
                     this
                 );
-            this.gameScene = this.scene.get("GameScene");
-            this.gameScene.events.on(
-                "addScore",
-                function () {
-                    this.score += 1;
-                    this.scoreText.setText(this.score);
-                },
-                this
-            );
         }
     }
 

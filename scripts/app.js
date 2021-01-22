@@ -1,9 +1,8 @@
 /*globals window, document,console,Phaser*/
 /*jshint esversion:6*/
 
-import { GameScene } from "./game.js";
-import { MenuScene } from "./menu.js";
-import { TilemapScene } from "./tilemap.js";
+import { MenuScene } from "./scene/menu.js";
+import { GameScene } from "./scene/game.js";
 import "../lib/phaser.js";
 
 function preload() {
@@ -58,7 +57,7 @@ let myConfig = {
         },
     },
     parent: "game",
-    scene: [MenuScene, GameScene, TilemapScene],
+    scene: [MenuScene, GameScene],
     title: "A world without.",
     autoFocus: true,
 };
