@@ -21,7 +21,6 @@ export class GameScene extends Phaser.Scene {
     }
 
     create() {
-        console.log("Creating tileMap scene ", this);
         const os = this.sys.game.device.os;
 
         const isMobile = os.android || os.iOs || os.iPad || os.iPhone;
