@@ -32,7 +32,7 @@ export class MenuScene extends Phaser.Scene {
                     "pointerup",
                     function (p, x, y, e) {
                         e.stopPropagation();
-                        this.scene.switch("TilemapScene");
+                        this.scene.switch("GameScene");
                     },
                     this
                 );

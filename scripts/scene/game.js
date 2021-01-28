@@ -1,6 +1,6 @@
 export class GameScene extends Phaser.Scene {
     constructor() {
-        super("TilemapScene");
+        super("GameScene");
         this.player = null;
         this.cursors = null;
         this.leftButton = null;
