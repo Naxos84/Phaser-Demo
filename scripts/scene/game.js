@@ -194,27 +194,36 @@ export class GameScene extends Phaser.Scene {
     updatePlayer(time, delta) {
         const speed = 150;
 
+        // Stop any previous movement from the last frame
+        this.player.body.setVelocity(0);
+
+        let animationToPlay = this.player.anims.currentAnim.key;
+        if (animationToPlay.includes("walk")) {
+            animationToPlay = this.stopAnimation[this.player.anims.currentAnim.key];
+        }
+
         if (this.cursors.left.isDown) {
             this.player.body.setVelocityX(-100);
-            this.player.body.setVelocityY(0);
-            this.player.anims.play("walkLeft", true);
-        } else if (this.cursors.right.isDown) {
+            animationToPlay = "walkLeft";
+        }
+        if (this.cursors.right.isDown) {
             this.player.body.setVelocityX(100);
-            this.player.body.setVelocityY(0);
-            this.player.anims.play("walkRight", true);
-        } else if (this.cursors.up.isDown) {
-            this.player.body.setVelocityX(0);
+            animationToPlay = "walkRight";
+        }
+        if (this.cursors.up.isDown) {
             this.player.body.setVelocityY(-100);
-            this.player.anims.play("walkUp", true);
-        } else if (this.cursors.down.isDown) {
-            this.player.body.setVelocityX(0);
+            animationToPlay = "walkUp";
+        }
+        if (this.cursors.down.isDown) {
             this.player.body.setVelocityY(100);
-            this.player.anims.play("walkDown", true);
+            animationToPlay = "walkDown";
+        }
+        if (animationToPlay.includes("walk")) {
+            this.player.anims.play(animationToPlay, true);
         } else {
             this.player.body.setVelocityX(0);
             this.player.body.setVelocityY(0);
-            const stopAnimationKey = this.stopAnimation[this.player.anims.currentAnim.key];
-            this.player.anims.chain(stopAnimationKey, true);
+            this.player.anims.chain(animationToPlay, true);
             this.player.anims.stop();
         }
 
