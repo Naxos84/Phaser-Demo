@@ -1,3 +1,5 @@
+import Map from "../map/map.js";
+
 export class GameScene extends Phaser.Scene {
     constructor() {
         super("GameScene");
@@ -174,33 +176,14 @@ export class GameScene extends Phaser.Scene {
     }
 
     createMap() {
-        const map = this.make.tilemap({
-            key: "map",
-        });
-        const tiles = map.addTilesetImage("base", "base-extruded", 16, 16, 1, 3);
-        const backgroundLayer = map.createStaticLayer("Background", tiles, 0, 0);
-        const treesLayer = map.createStaticLayer("Trees", tiles, 0, 0);
-
-        backgroundLayer.setCollisionByProperty({ collision: true });
-        treesLayer.setCollisionByProperty({ collision: true });
-
-        const debugGraphics = this.add.graphics().setAlpha(0.75);
-        const debugRenderOptions = {
-            tileColor: null, // Color of non-colliding tiles
-            collidingTileColor: new Phaser.Display.Color(123, 134, 48, 255), // Color of colliding tiles
-            faceColor: new Phaser.Display.Color(255, 0, 0, 255), // Color of colliding face edges
-        };
-        backgroundLayer.renderDebug(debugGraphics, debugRenderOptions);
-        treesLayer.renderDebug(debugGraphics, debugRenderOptions);
-        treesLayer.setDepth(1);
-
-        const playerSpawn = map.getObjectLayer("Objects").objects.find((obj) => obj.name === "player_spawn");
+        const map = new Map(this, "map");
+        const dimensions = map.getMapDimensionInPixels();
 
         return {
-            playerSpawn,
-            mapWidthInPixels: map.widthInPixels,
-            mapHeightInPixels: map.heightInPixels,
-            collidableLayers: [treesLayer, backgroundLayer],
+            playerSpawn: map.getPlayerSpawn(),
+            mapWidthInPixels: dimensions.width,
+            mapHeightInPixels: dimensions.height,
+            collidableLayers: map.getCollidableLayers(),
         };
     }
 
